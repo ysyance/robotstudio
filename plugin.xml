@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            icon="icons/project.png">
+         <run
+               class="cn.edu.seu.robot.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cn.edu.seu.robot.Perspective"
+            icon="icons/project.png"
+            id="cn.edu.seu.robot.perspective"
+            name="RobotPerspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="cn.edu.seu.robot.editor.CodeEditor"
+            default="false"
+            icon="icons/page_white_text.png"
+            id="cn.edu.seu.robot.codeeditor"
+            name="CodeEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="cn.edu.seu.robot.editor.AbstractPreferenceInitializerCode">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="cn.edu.seu.robot.navigator.ProjectExplorer"
+            icon="icons/explore.png"
+            id="cn.edu.seu.robot.projectnavigator"
+            name="Project Explorer"
+            restorable="true">
+      </view>
+      <view
+            class="cn.edu.seu.robot.navigator.LibraryExplorer"
+            icon="icons/res.png"
+            id="cn.edu.seu.robot.libnavigatorview"
+            name="Library Explorer"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
