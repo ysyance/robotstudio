@@ -1,12 +1,17 @@
 package cn.edu.seu.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import cn.edu.seu.robot.editor.EditorColorProvider;
+import cn.edu.seu.robot.models.LibraryEntity;
 import cn.edu.seu.robot.models.ProjectEntity;
+import cn.edu.seu.robot.xmlparser.XmlLibraryParser;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -24,6 +29,7 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PREF_FONT_CODE = "fontCode";
 	
 	private static ProjectEntity project;
+	private static List<LibraryEntity> libList = new ArrayList<>();
 	
 	private IPreferenceStore store;
 	private EditorColorProvider colorProvider;
@@ -46,6 +52,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 		this.store = this.getPreferenceStore();
 		this.colorProvider = new EditorColorProvider(this.getPreferenceStore());
+		XmlLibraryParser.loadLibrary(libList);
 	}
 	
 	public EditorColorProvider getEditorColorProvider(){
@@ -90,4 +97,9 @@ public class Activator extends AbstractUIPlugin {
 	public static void setCurrentProject(ProjectEntity pro){
 		project = pro;
 	}
+	
+	public static List<LibraryEntity> getLib(){
+		return libList;
+	}
+	
 }

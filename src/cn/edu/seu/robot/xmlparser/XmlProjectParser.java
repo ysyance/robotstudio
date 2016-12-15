@@ -11,6 +11,7 @@ import org.dom4j.io.SAXReader;
 
 import cn.edu.seu.robot.models.DHParam;
 import cn.edu.seu.robot.models.IOFacilityEntity;
+import cn.edu.seu.robot.models.LibraryEntity;
 import cn.edu.seu.robot.models.ProjectEntity;
 import cn.edu.seu.robot.models.RobotEntity;
 import cn.edu.seu.robot.models.ServoEntity;
@@ -24,7 +25,7 @@ public class XmlProjectParser {
 		this.file = file;
 	}
 
-	public ProjectEntity load() throws DocumentException {
+	public ProjectEntity loadProject() throws DocumentException {
 		SAXReader sax = new SAXReader();
 		org.dom4j.Document document = sax.read(file);
 		Element root = document.getRootElement();
@@ -154,7 +155,9 @@ public class XmlProjectParser {
 	
 	private void parseTC6XML(File plcfile) {
 	}
-
+	
+	
+	
 }
 
 

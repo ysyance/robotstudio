@@ -29,4 +29,5 @@ public class EntityTypeFactory {
 	public static final String ROBOT_ENTITY = "ROBOT_ENTITY";
 	public static final String SERVO_ENTITY = "SERVO_ENTITY";
 	public static final String SERVO_FOLDER = "SERVO_FOLDER";
+	public static final String LIBRARY_ENTITY = "LIBRARY_ENTITY";
 }

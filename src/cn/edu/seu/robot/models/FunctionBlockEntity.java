@@ -7,21 +7,21 @@ import cn.edu.seu.robot.utils.EntityTypeFactory;
 import cn.edu.seu.robot.utils.PluginImage;
 
 /**
- * IEC61131-3标准之FUNCTIONBLOCK 
- * inList: 输入变量列表 
- * outList: 输出变量列表 
- * inoutList：输入输出变量列表
- * varList：内部变量列表 
- * tempList：临时变量列表
+ * IEC61131-3标准之FUNCTIONBLOCK inList: 输入变量列表 outList: 输出变量列表 inoutList：输入输出变量列表
+ * varList：内部变量列表 tempList：临时变量列表
+ * 
  * @author yance
  *
  */
 public class FunctionBlockEntity extends ITreeEntry {
-	List<VarDeclareEntity> inList = new ArrayList<>();
-	List<VarDeclareEntity> outList = new ArrayList<>();
-	List<VarDeclareEntity> inoutList = new ArrayList<>();
-	List<VarDeclareEntity> varList = new ArrayList<>();
-	List<VarDeclareEntity> tempList = new ArrayList<>();
+	private List<VarDeclareEntity> inList = new ArrayList<>();
+	private List<VarDeclareEntity> outList = new ArrayList<>();
+	private List<VarDeclareEntity> inoutList = new ArrayList<>();
+	private List<VarDeclareEntity> varList = new ArrayList<>();
+	private List<VarDeclareEntity> tempList = new ArrayList<>();
+
+	private String body;
+	private String annotation;
 
 	public FunctionBlockEntity(String name) {
 		super(name, EntityTypeFactory.FUNCTION_BLOCK_ENTITY);
@@ -66,6 +66,22 @@ public class FunctionBlockEntity extends ITreeEntry {
 
 	public void setTempList(List<VarDeclareEntity> tempList) {
 		this.tempList = tempList;
+	}
+
+	public String getBody() {
+		return this.body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public String getAnnotation() {
+		return this.annotation;
+	}
+
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
 	}
 
 }

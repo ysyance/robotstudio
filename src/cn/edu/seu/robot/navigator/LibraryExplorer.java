@@ -16,8 +16,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
+import cn.edu.seu.robot.Activator;
+import cn.edu.seu.robot.models.IPOUEntity;
 import cn.edu.seu.robot.models.ITreeEntry;
-import cn.edu.seu.robot.utils.EntryFactory;
 
 public class LibraryExplorer extends ViewPart {
 	public static final String ID = "cn.edu.seu.robot.libnavigatorview";
@@ -35,7 +36,7 @@ public class LibraryExplorer extends ViewPart {
 		tv = new TreeViewer(sashForm);
 		tv.setContentProvider(new ProjectExplorerContentProvider());
 		tv.setLabelProvider(new ProjectExplorerLabelProvider());
-		tv.setInput(EntryFactory.createNavigatorEntryTree());
+		tv.setInput(Activator.getLib());
 		
 		getViewSite().setSelectionProvider(tv);
 		
@@ -55,8 +56,12 @@ public class LibraryExplorer extends ViewPart {
 				
 				if(obj != null && obj instanceof ITreeEntry) {
 					ITreeEntry entry = (ITreeEntry)obj;
+					
 					statusline.setMessage(entry.getImage(), entry.getName() + " selected");
-					text.setText(entry.getName());
+					if(obj instanceof IPOUEntity){
+						IPOUEntity pouEntry = (IPOUEntity)obj;
+						text.setText(pouEntry.getPouInfo());
+					}
 				}
 			}
 		});

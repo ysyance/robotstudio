@@ -7,6 +7,13 @@ public class VarDeclareEntity {
 	private String initVal;
 	private String option; // constant:常量 retain： 保持变量 non-retain： 非保持变量
 	private String annotation; // 注释
+	
+	public VarDeclareEntity() {
+	}
+	
+	public VarDeclareEntity(String name) {
+		this.name = name;
+	}
 
 	public String getName() {
 		return name;

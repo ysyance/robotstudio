@@ -19,6 +19,7 @@ public class PluginImage {
 	public static final Image PROJECT;
 	public static final Image SERVO;
 	public static final Image IO_FACILITY;
+	public static final Image LIB_ENTITY;
 	
 	public static final ImageDescriptor OPEN_FILE_DESC;
 	public static final ImageDescriptor CLOSE_PROJECT_DESC;
@@ -33,7 +34,7 @@ public class PluginImage {
 	static{
 		String iconPath = "icons/";
 		NEW_FOLDER = createImageDescriptor(iconPath + "new_folder.gif").createImage();
-		FUNCTION = createImageDescriptor(iconPath + "function.png").createImage();
+		FUNCTION = createImageDescriptor(iconPath + "function_public.png").createImage();
 		FUNCTIONBLOCK = createImageDescriptor(iconPath + "fb.png").createImage();
 		PROGRAM = createImageDescriptor(iconPath + "program.png").createImage();
 		POU_FOLDER = createImageDescriptor(iconPath + "poufolder.png").createImage();
@@ -43,6 +44,7 @@ public class PluginImage {
 		PROJECT = createImageDescriptor(iconPath + "project.png").createImage();
 		SERVO = createImageDescriptor(iconPath + "servo.png").createImage();
 		IO_FACILITY = createImageDescriptor(iconPath + "io.png").createImage();
+		LIB_ENTITY = createImageDescriptor(iconPath + "maven_index.gif").createImage();
 		
 		OPEN_FILE_DESC = createImageDescriptor(iconPath + "openfile.png");
 		CLOSE_PROJECT_DESC = createImageDescriptor(iconPath + "closeproject.png");

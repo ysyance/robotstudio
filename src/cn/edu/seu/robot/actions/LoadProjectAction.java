@@ -41,7 +41,7 @@ public class LoadProjectAction extends Action {
 				File file = new File(path);
 				XmlProjectParser proLoader = new XmlProjectParser(file);
 				try {
-					Activator.setCurrentProject(proLoader.load());
+					Activator.setCurrentProject(proLoader.loadProject());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
