@@ -15,7 +15,7 @@ public class ShowLibraryExplorerAction extends Action {
 	public ShowLibraryExplorerAction(IWorkbenchWindow window) {
 		this.window = window;
 		this.setId(ID);
-		this.setText("Show Library Veiwer");
+		this.setText("Show Library");
 		this.setImageDescriptor(PluginImage.SHOW_LIBRARY_DESC);
 	}
 	

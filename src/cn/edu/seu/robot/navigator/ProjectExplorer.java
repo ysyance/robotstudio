@@ -44,6 +44,8 @@ public class ProjectExplorer extends ViewPart {
 		tv.setContentProvider(new ProjectExplorerContentProvider());
 		tv.setLabelProvider(new ProjectExplorerLabelProvider());
 		
+		this.getViewSite().setSelectionProvider(tv);
+		
 		
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getToolBarManager().add(expandAction);
@@ -56,8 +58,8 @@ public class ProjectExplorer extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 				IStatusLineManager statusline = getViewSite().getActionBars().getStatusLineManager();
 				Object obj = selection.getFirstElement();
-				if(obj == null) return;
-				if(obj instanceof ITreeEntry) {
+				
+				if(obj != null && obj instanceof ITreeEntry) {
 					ITreeEntry entry = (ITreeEntry)obj;
 					statusline.setMessage(entry.getImage(), entry.getName() + " selected");
 				}

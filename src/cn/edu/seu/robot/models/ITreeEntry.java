@@ -3,9 +3,13 @@ package cn.edu.seu.robot.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-public class ITreeEntry {
+import cn.edu.seu.robot.models.properties.ITreeEntryPropertySource;
+
+public class ITreeEntry implements IAdaptable {
 
 	private String name;
 	private String type;
@@ -75,5 +79,13 @@ public class ITreeEntry {
 
 	public boolean hasChild() {
 		return children.size() > 0;
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if(adapter == IPropertySource.class) {
+			return (T) new ITreeEntryPropertySource(this);
+		}
+		return null;
 	}
 }
