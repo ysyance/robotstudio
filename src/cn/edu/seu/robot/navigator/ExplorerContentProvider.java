@@ -5,7 +5,7 @@ import java.util.List;
 import cn.edu.seu.robot.models.ITreeEntry;
 import cn.edu.seu.robot.utils.TreeContentProviderAdapter;
 
-public class ProjectExplorerContentProvider extends TreeContentProviderAdapter {
+public class ExplorerContentProvider extends TreeContentProviderAdapter {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof List) {
 			return ((List<ITreeEntry>) inputElement).toArray();

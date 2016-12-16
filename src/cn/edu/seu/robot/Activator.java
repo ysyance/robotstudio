@@ -8,9 +8,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import cn.edu.seu.robot.editor.EditorColorProvider;
 import cn.edu.seu.robot.models.LibraryEntity;
 import cn.edu.seu.robot.models.ProjectEntity;
+import cn.edu.seu.robot.utils.EditorColorProvider;
 import cn.edu.seu.robot.xmlparser.XmlLibraryParser;
 
 /**

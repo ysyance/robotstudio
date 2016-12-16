@@ -1,4 +1,4 @@
-package cn.edu.seu.robot.editor;
+package cn.edu.seu.robot.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;

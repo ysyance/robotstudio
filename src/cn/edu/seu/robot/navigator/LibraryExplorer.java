@@ -3,6 +3,8 @@ package cn.edu.seu.robot.navigator;
 import java.util.List;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -19,6 +21,7 @@ import org.eclipse.ui.part.ViewPart;
 import cn.edu.seu.robot.Activator;
 import cn.edu.seu.robot.models.IPOUEntity;
 import cn.edu.seu.robot.models.ITreeEntry;
+import cn.edu.seu.robot.models.LibraryEntity;
 
 public class LibraryExplorer extends ViewPart {
 	public static final String ID = "cn.edu.seu.robot.libnavigatorview";
@@ -34,8 +37,8 @@ public class LibraryExplorer extends ViewPart {
 	public void createPartControl(Composite parent) {
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
 		tv = new TreeViewer(sashForm);
-		tv.setContentProvider(new ProjectExplorerContentProvider());
-		tv.setLabelProvider(new ProjectExplorerLabelProvider());
+		tv.setContentProvider(new ExplorerContentProvider());
+		tv.setLabelProvider(new ExplorerLabelProvider());
 		tv.setInput(Activator.getLib());
 		
 		getViewSite().setSelectionProvider(tv);
@@ -61,6 +64,24 @@ public class LibraryExplorer extends ViewPart {
 					if(obj instanceof IPOUEntity){
 						IPOUEntity pouEntry = (IPOUEntity)obj;
 						text.setText(pouEntry.getPouInfo());
+					}
+				}
+			}
+		});
+		
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+				Object obj = selection.getFirstElement();
+				if(obj != null && obj instanceof LibraryEntity) {
+					LibraryEntity entity = (LibraryEntity)obj;
+					boolean isExpand = tv.getExpandedState(entity);
+					if(isExpand == false) {
+						tv.expandToLevel(entity, 1);
+					} else {
+						tv.collapseToLevel(entity, 1);
 					}
 				}
 			}

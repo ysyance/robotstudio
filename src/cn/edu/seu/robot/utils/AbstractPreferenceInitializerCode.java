@@ -1,4 +1,4 @@
-package cn.edu.seu.robot.editor;
+package cn.edu.seu.robot.utils;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;

@@ -1,4 +1,4 @@
-package cn.edu.seu.robot.editor;
+package cn.edu.seu.robot.editors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.StringConverter;
@@ -67,12 +67,10 @@ public class CodeEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
 
 	}
 

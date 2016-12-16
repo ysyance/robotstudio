@@ -133,7 +133,7 @@ public class XmlProjectParser {
 		attr = node.attribute("name");
 		robot.setRobotType(attr.getText());
 		attr = node.attribute("type");
-		robot.setType(attr.getText());
+		robot.setRobotType(attr.getText());
 		listElem = node.elements();
 		for(Element e : listElem) {
 			DHParam dh = new DHParam();

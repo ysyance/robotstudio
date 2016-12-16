@@ -9,8 +9,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import cn.edu.seu.robot.editor.CodeEditor;
-import cn.edu.seu.robot.editor.CodeEditorInput;
+import cn.edu.seu.robot.editors.CodeEditor;
+import cn.edu.seu.robot.editors.CodeEditorInput;
 import cn.edu.seu.robot.utils.PluginImage;
 
 public class CreateProjectAction extends Action {

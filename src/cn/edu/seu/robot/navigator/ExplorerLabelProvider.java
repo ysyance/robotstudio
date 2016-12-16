@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Image;
 import cn.edu.seu.robot.models.ITreeEntry;
 import cn.edu.seu.robot.utils.LabelProviderAdapter;
 
-public class ProjectExplorerLabelProvider extends LabelProviderAdapter {
+public class ExplorerLabelProvider extends LabelProviderAdapter {
 	public String getText(Object element) {
 		return ((ITreeEntry) element).getName();
 	}

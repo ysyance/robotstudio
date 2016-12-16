@@ -21,6 +21,8 @@ public class PluginImage {
 	public static final Image IO_FACILITY;
 	public static final Image LIB_ENTITY;
 	
+	public static final Image ROBOT_MASTER_FORM;
+	
 	public static final ImageDescriptor OPEN_FILE_DESC;
 	public static final ImageDescriptor CLOSE_PROJECT_DESC;
 	public static final ImageDescriptor OPEN_PROJECT_DESC;
@@ -39,12 +41,14 @@ public class PluginImage {
 		PROGRAM = createImageDescriptor(iconPath + "program.png").createImage();
 		POU_FOLDER = createImageDescriptor(iconPath + "poufolder.png").createImage();
 		PLC = createImageDescriptor(iconPath + "plc.png").createImage();
-		ROBOT = createImageDescriptor(iconPath + "robot.png").createImage();
+		ROBOT = createImageDescriptor(iconPath + "robot.bmp").createImage();
 		SERVO_FOLDER = createImageDescriptor(iconPath + "servofolder.png").createImage();
 		PROJECT = createImageDescriptor(iconPath + "project.png").createImage();
 		SERVO = createImageDescriptor(iconPath + "servo.png").createImage();
 		IO_FACILITY = createImageDescriptor(iconPath + "io.png").createImage();
 		LIB_ENTITY = createImageDescriptor(iconPath + "maven_index.gif").createImage();
+		
+		ROBOT_MASTER_FORM = createImageDescriptor(iconPath + "form_banner.gif").createImage();
 		
 		OPEN_FILE_DESC = createImageDescriptor(iconPath + "openfile.png");
 		CLOSE_PROJECT_DESC = createImageDescriptor(iconPath + "closeproject.png");

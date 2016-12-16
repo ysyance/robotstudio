@@ -24,17 +24,24 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="cn.edu.seu.robot.editor.CodeEditor"
+            class="cn.edu.seu.robot.editors.CodeEditor"
             default="false"
             icon="icons/page_white_text.png"
             id="cn.edu.seu.robot.codeeditor"
             name="CodeEditor">
       </editor>
+      <editor
+            class="cn.edu.seu.robot.editors.RobotEditor"
+            default="false"
+            icon="icons/Robot.bmp"
+            id="cn.edu.seu.robot.roboteditor"
+            name="RobotEditor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="cn.edu.seu.robot.editor.AbstractPreferenceInitializerCode">
+            class="cn.edu.seu.robot.utils.AbstractPreferenceInitializerCode">
       </initializer>
    </extension>
    <extension
@@ -53,6 +60,14 @@
             name="Library Explorer"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="cn.edu.seu.robot.views.ConsoleFactory"
+            icon="icons/console_view.gif"
+            label="Output">
+      </consoleFactory>
    </extension>
 
 </plugin>

@@ -19,8 +19,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import cn.edu.seu.robot.Activator;
-import cn.edu.seu.robot.editor.CodeEditor;
-import cn.edu.seu.robot.editor.CodeEditorInput;
+import cn.edu.seu.robot.editors.CodeEditor;
+import cn.edu.seu.robot.editors.CodeEditorInput;
 import cn.edu.seu.robot.models.ITreeEntry;
 import cn.edu.seu.robot.models.ProjectEntity;
 import cn.edu.seu.robot.utils.PluginImage;
@@ -41,8 +41,8 @@ public class ProjectExplorer extends ViewPart {
 		expandAction = new ExpandAction();
 		
 		tv = new TreeViewer(parent);
-		tv.setContentProvider(new ProjectExplorerContentProvider());
-		tv.setLabelProvider(new ProjectExplorerLabelProvider());
+		tv.setContentProvider(new ExplorerContentProvider());
+		tv.setLabelProvider(new ExplorerLabelProvider());
 		
 		this.getViewSite().setSelectionProvider(tv);
 		
@@ -70,24 +70,11 @@ public class ProjectExplorer extends ViewPart {
 			
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				IWorkbenchPage page = getViewSite().getWorkbenchWindow().getActivePage();
+				
 				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 				Object obj = selection.getFirstElement();
 				
-				if(obj != null && obj instanceof ITreeEntry) {
-					ITreeEntry entry = (ITreeEntry)obj;
-					CodeEditorInput input = new CodeEditorInput(entry.getName());
-					IEditorPart editor = page.findEditor(input);
-					if(editor != null) {
-						page.bringToTop(editor);
-					} else {
-						try {
-							page.openEditor(input, CodeEditor.ID);
-						} catch (PartInitException e) {
-							e.printStackTrace();
-						}
-					}
-				}
+				EditorOpenFactory.open(obj);
 			}
 		});
 		

@@ -1,4 +1,4 @@
-package cn.edu.seu.robot.editor;
+package cn.edu.seu.robot.editors;
 
 import java.io.File;
 
@@ -7,9 +7,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 public class CodeEditorInput implements IEditorInput {
-	
+
 	String name;
-	
+
 	public CodeEditorInput(String name) {
 		this.name = name;
 	}
@@ -27,7 +27,6 @@ public class CodeEditorInput implements IEditorInput {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -38,7 +37,6 @@ public class CodeEditorInput implements IEditorInput {
 
 	@Override
 	public IPersistableElement getPersistable() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -46,16 +44,16 @@ public class CodeEditorInput implements IEditorInput {
 	public String getToolTipText() {
 		return this.name;
 	}
-	
-	  @Override  
-	    public boolean equals(Object obj) {  
-	        if(obj instanceof CodeEditorInput){  
-	        	CodeEditorInput newDbEditorInput = (CodeEditorInput)obj;  
-	            if(this.name.equals(newDbEditorInput.getName())) {  
-	                return true;  
-	            }  
-	        }  
-	        return false;  
-	    }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof CodeEditorInput) {
+			CodeEditorInput newDbEditorInput = (CodeEditorInput) obj;
+			if (this.name.equals(newDbEditorInput.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
