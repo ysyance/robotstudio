@@ -20,6 +20,7 @@ public class PluginImage {
 	public static final Image SERVO;
 	public static final Image IO_FACILITY;
 	public static final Image LIB_ENTITY;
+	public static final Image CONFIG_ENTITY;
 	
 	public static final Image ROBOT_MASTER_FORM;
 	
@@ -32,6 +33,7 @@ public class PluginImage {
 	public static final ImageDescriptor SHOW_CONSOLE_DESC;
 	public static final ImageDescriptor SHOW_LIBRARY_DESC;
 	public static final ImageDescriptor SHOW_PROPERTY_DESC;
+	
 	
 	static{
 		String iconPath = "icons/";
@@ -47,6 +49,7 @@ public class PluginImage {
 		SERVO = createImageDescriptor(iconPath + "servo.png").createImage();
 		IO_FACILITY = createImageDescriptor(iconPath + "io.png").createImage();
 		LIB_ENTITY = createImageDescriptor(iconPath + "maven_index.gif").createImage();
+		CONFIG_ENTITY = createImageDescriptor(iconPath + "html.png").createImage(); 
 		
 		ROBOT_MASTER_FORM = createImageDescriptor(iconPath + "form_banner.gif").createImage();
 		

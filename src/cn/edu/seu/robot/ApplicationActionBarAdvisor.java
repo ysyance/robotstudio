@@ -27,6 +27,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	private Action loadProjectAction;
 	private Action createProjectAction;
 	private Action closeProjectAction;
+	
+	private IWorkbenchAction saveAction;
+	
 	private IWorkbenchAction exitAction;
 	
 	private Action showNavigatorAction;
@@ -48,6 +51,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     	closeProjectAction = new CloseProjectAction(window);
     	this.register(closeProjectAction);
     	
+    	saveAction = ActionFactory.SAVE.create(window);
+    	this.register(saveAction);
     	exitAction = ActionFactory.QUIT.create(window);
     	this.register(exitAction);
     	
@@ -69,6 +74,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
     	fileMenu.add(createProjectAction);
     	fileMenu.add(loadProjectAction);
     	fileMenu.add(closeProjectAction);
+    	fileMenu.add(new Separator());
+    	fileMenu.add(saveAction);
     	fileMenu.add(new Separator());
     	
     	fileMenu.add(openFileAction);

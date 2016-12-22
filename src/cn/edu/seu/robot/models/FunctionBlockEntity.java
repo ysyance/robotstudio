@@ -13,7 +13,7 @@ import cn.edu.seu.robot.utils.PluginImage;
  * @author yance
  *
  */
-public class FunctionBlockEntity extends ITreeEntry {
+public class FunctionBlockEntity extends ITreeEntry implements IPOUEntity {
 	private List<VarDeclareEntity> inList = new ArrayList<>();
 	private List<VarDeclareEntity> outList = new ArrayList<>();
 	private List<VarDeclareEntity> inoutList = new ArrayList<>();
@@ -25,7 +25,7 @@ public class FunctionBlockEntity extends ITreeEntry {
 
 	public FunctionBlockEntity(String name) {
 		super(name, EntityTypeFactory.FUNCTION_BLOCK_ENTITY);
-		this.setImage(PluginImage.FUNCTION);
+		this.setImage(PluginImage.FUNCTIONBLOCK);
 	}
 
 	public List<VarDeclareEntity> getInList() {
@@ -82,6 +82,35 @@ public class FunctionBlockEntity extends ITreeEntry {
 
 	public void setAnnotation(String annotation) {
 		this.annotation = annotation;
+	}
+	
+	@Override
+	public String getPouInfo() {
+		String info = "NAME: " + this.getName() + "\n";
+		info += "DESC: " + this.getAnnotation() + "\n";
+		
+		info += "\n|> IEC Interface <|\n";
+		info += "(";
+		int count = inList.size();
+		for(int i = 0; i < count; i ++) {
+			info += inList.get(i).getName() + " : " + inList.get(i).getType();
+			if(i+1 < count) {
+				info += ", ";
+			}
+		}
+		info += ") => (" ;
+		count = outList.size();
+		for(int i = 0; i < count; i ++) {
+			info += outList.get(i).getName() + " : " + outList.get(i).getType();
+			if(i+1 < count) {
+				info += ", ";
+			}
+		}
+		info += ")" + "\n";
+		
+		info += "\n|> IEC Body <|\n" + this.body;
+		
+		return info;
 	}
 
 }

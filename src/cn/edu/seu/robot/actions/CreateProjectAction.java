@@ -31,7 +31,7 @@ public class CreateProjectAction extends Action {
 		if(path != null) {
 			
 			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			CodeEditorInput input = new CodeEditorInput(path);
+			CodeEditorInput input = new CodeEditorInput(path, null);
 			IEditorPart editor = page.findEditor(input);
 			if(editor != null) {
 				page.bringToTop(editor);

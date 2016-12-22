@@ -6,23 +6,29 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import cn.edu.seu.robot.models.ITreeEntry;
+
 public class CodeEditorInput implements IEditorInput {
 
-	String name;
+	private String name;
+	private ITreeEntry entry;
 
-	public CodeEditorInput(String name) {
+	public CodeEditorInput(String name, ITreeEntry entry) {
 		this.name = name;
+		this.entry = entry;
+	}
+	public ITreeEntry getEntry(){
+		return this.entry;
 	}
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean exists() {
-		return new File(name).exists();
+		return false;
 	}
 
 	@Override

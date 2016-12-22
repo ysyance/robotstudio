@@ -34,11 +34,16 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CaretEvent;
+import org.eclipse.swt.custom.CaretListener;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
@@ -52,6 +57,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 import cn.edu.seu.robot.Activator;
+import cn.edu.seu.robot.models.FunctionBlockEntity;
+import cn.edu.seu.robot.models.FunctionEntity;
+import cn.edu.seu.robot.models.ITreeEntry;
+import cn.edu.seu.robot.models.Program;
 
 public class CodeEditor extends EditorPart {
 	public static final String ID = "cn.edu.seu.robot.codeeditor";
@@ -59,6 +68,12 @@ public class CodeEditor extends EditorPart {
 	private boolean dirty;
 	private CodeEditorInput input;
 	private SourceViewer codeViewer;
+	private Composite topComp;
+	
+	private int curLine;
+	private Color curLineColor;
+	private Color textBackgroundColor;
+	
 
 	private IUndoManager undoManager;
 
@@ -67,21 +82,26 @@ public class CodeEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
+		dirty=false;
+		// TODO
+		firePropertyChange(ISaveablePart2.PROP_DIRTY);
 	}
 
 	@Override
 	public void doSaveAs() {
-
 	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		this.setSite(site);
 		this.setInput(input);
-		
 		this.setPartName(input.getName());
-
 		this.input = (CodeEditorInput) input;
+		
+		this.curLine = 1;
+		this.curLineColor = new Color(Display.getCurrent(),new RGB(224, 251, 252));
+		this.textBackgroundColor = new Color(Display.getCurrent(),new RGB(255, 255, 255));
+		
 	}
 
 	@Override
@@ -96,15 +116,23 @@ public class CodeEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		
+		
+		topComp = new Composite(sashForm, SWT.BORDER);
+		
 		CompositeRuler ruler = new CompositeRuler();
 
-		AnnotationRulerColumn annoCol = new AnnotationRulerColumn(15);
+		AnnotationRulerColumn annoCol = new AnnotationRulerColumn(12);
 		LineNumberRulerColumn lineCol = new LineNumberRulerColumn();
+		AnnotationRulerColumn placeHolder = new AnnotationRulerColumn(8);
+		lineCol.setBackground(new Color(Display.getCurrent(), new RGB(240, 240, 240)));
 
 		ruler.addDecorator(0, annoCol);
 		ruler.addDecorator(1, lineCol);
+		ruler.addDecorator(2, placeHolder);
 
-		codeViewer = new SourceViewer(parent, ruler, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		codeViewer = new SourceViewer(sashForm, ruler, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		codeViewer.configure(new CodeConfiguration());
 
 		Font font = new Font(Display.getCurrent(), StringConverter
@@ -150,7 +178,25 @@ public class CodeEditor extends EditorPart {
 		});
 		
 		StyledText text = codeViewer.getTextWidget();
-		text.setText("FUNTION func END_FUNCTION");
+		text.setIndent(4);
+		
+		String body = null;
+		ITreeEntry entry = input.getEntry();
+		if(entry instanceof FunctionBlockEntity) {
+			FunctionBlockEntity entity = (FunctionBlockEntity)input.getEntry();
+			body = entity.getBody();
+		} else if(entry instanceof FunctionEntity) {
+			FunctionEntity entity = (FunctionEntity)input.getEntry();
+			body = entity.getBody();
+		} else if(entry instanceof Program) {
+			Program entity = (Program)input.getEntry();
+			body = entity.getBody();
+		}
+		if(body != null) {
+			text.setText(body);
+		} else {
+			text.setText("");
+		}
 
 		
 		text.addModifyListener(new ModifyListener() {
@@ -161,6 +207,19 @@ public class CodeEditor extends EditorPart {
 				firePropertyChange(ISaveablePart2.PROP_DIRTY);
 			}
 		});
+		
+		text.addCaretListener(new CaretListener() {
+			
+			@Override
+			public void caretMoved(CaretEvent event) {
+				text.setLineBackground(curLine, 1, textBackgroundColor);
+				curLine = text.getLineAtOffset(text.getCaretOffset());
+				text.setLineBackground(curLine, 1, curLineColor);
+				
+			}
+		});
+		
+		sashForm.setWeights(new int[] {1, 2});
 		
 	}
 

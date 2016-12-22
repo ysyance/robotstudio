@@ -13,16 +13,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import cn.edu.seu.robot.Activator;
-import cn.edu.seu.robot.editors.CodeEditor;
-import cn.edu.seu.robot.editors.CodeEditorInput;
+import cn.edu.seu.robot.models.DataTypeFolder;
 import cn.edu.seu.robot.models.ITreeEntry;
+import cn.edu.seu.robot.models.POUFolder;
 import cn.edu.seu.robot.models.ProjectEntity;
+import cn.edu.seu.robot.models.ServoFolder;
 import cn.edu.seu.robot.utils.PluginImage;
 
 public class ProjectExplorer extends ViewPart {
@@ -74,7 +72,19 @@ public class ProjectExplorer extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 				Object obj = selection.getFirstElement();
 				
-				EditorOpenFactory.open(obj);
+				if(obj != null && (obj instanceof POUFolder || obj instanceof ServoFolder || obj instanceof DataTypeFolder)) {
+					ITreeEntry entity = (ITreeEntry)obj;
+					boolean isExpand = tv.getExpandedState(entity);
+					if(isExpand == false) {
+						tv.expandToLevel(entity, 1);
+					} else {
+						tv.collapseToLevel(entity, 1);
+					}
+				} else {
+					EditorOpenFactory.open(obj);
+				}
+				
+				
 			}
 		});
 		
