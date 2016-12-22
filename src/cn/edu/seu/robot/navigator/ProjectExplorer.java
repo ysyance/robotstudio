@@ -72,7 +72,7 @@ public class ProjectExplorer extends ViewPart {
 				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 				Object obj = selection.getFirstElement();
 				
-				if(obj != null && (obj instanceof POUFolder || obj instanceof ServoFolder || obj instanceof DataTypeFolder)) {
+				if(obj != null && (obj instanceof POUFolder || obj instanceof ServoFolder || obj instanceof DataTypeFolder || obj instanceof ProjectEntity)) {
 					ITreeEntry entity = (ITreeEntry)obj;
 					boolean isExpand = tv.getExpandedState(entity);
 					if(isExpand == false) {

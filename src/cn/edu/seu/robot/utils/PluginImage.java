@@ -33,6 +33,8 @@ public class PluginImage {
 	public static final ImageDescriptor SHOW_CONSOLE_DESC;
 	public static final ImageDescriptor SHOW_LIBRARY_DESC;
 	public static final ImageDescriptor SHOW_PROPERTY_DESC;
+	public static final ImageDescriptor ADD_VARIABLE_DESC;
+	public static final ImageDescriptor DEL_VARIABLE_DESC;
 	
 	
 	static{
@@ -62,6 +64,8 @@ public class PluginImage {
 		SHOW_CONSOLE_DESC = createImageDescriptor(iconPath + "console_view.gif");
 		SHOW_LIBRARY_DESC = createImageDescriptor(iconPath + "res.png");
 		SHOW_PROPERTY_DESC = createImageDescriptor(iconPath + "properties_view.gif");
+		ADD_VARIABLE_DESC = createImageDescriptor(iconPath + "new.png");
+		DEL_VARIABLE_DESC = createImageDescriptor(iconPath + "deleted.png");
 	}
 	
 

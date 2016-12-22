@@ -14,11 +14,14 @@ import cn.edu.seu.robot.utils.PluginImage;
  *
  */
 public class Program extends ITreeEntry {
+
+
 	private List<VarDeclareEntity> inList = new ArrayList<>();
 	private List<VarDeclareEntity> outList = new ArrayList<>();
 	private List<VarDeclareEntity> inoutList = new ArrayList<>();
 	private List<VarDeclareEntity> varList = new ArrayList<>();
 	private List<VarDeclareEntity> tempList = new ArrayList<>();
+	private List<VarDeclareEntity> globalList = new ArrayList<>();
 
 	private String body;
 	private String annotation;
@@ -82,6 +85,14 @@ public class Program extends ITreeEntry {
 
 	public void setAnnotation(String annotation) {
 		this.annotation = annotation;
+	}
+	
+	public List<VarDeclareEntity> getGlobalList() {
+		return globalList;
+	}
+
+	public void setGlobalList(List<VarDeclareEntity> globalList) {
+		this.globalList = globalList;
 	}
 
 }

@@ -1,6 +1,13 @@
 package cn.edu.seu.robot.editors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -33,6 +40,17 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
 import org.eclipse.swt.custom.CaretListener;
@@ -42,18 +60,22 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.EditorPart;
 
 import cn.edu.seu.robot.Activator;
@@ -61,6 +83,8 @@ import cn.edu.seu.robot.models.FunctionBlockEntity;
 import cn.edu.seu.robot.models.FunctionEntity;
 import cn.edu.seu.robot.models.ITreeEntry;
 import cn.edu.seu.robot.models.Program;
+import cn.edu.seu.robot.models.VarDeclareEntity;
+import cn.edu.seu.robot.utils.PluginImage;
 
 public class CodeEditor extends EditorPart {
 	public static final String ID = "cn.edu.seu.robot.codeeditor";
@@ -68,12 +92,11 @@ public class CodeEditor extends EditorPart {
 	private boolean dirty;
 	private CodeEditorInput input;
 	private SourceViewer codeViewer;
-	private Composite topComp;
-	
+	private TableViewer tabViewer;
+
 	private int curLine;
 	private Color curLineColor;
 	private Color textBackgroundColor;
-	
 
 	private IUndoManager undoManager;
 
@@ -82,7 +105,7 @@ public class CodeEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		dirty=false;
+		dirty = false;
 		// TODO
 		firePropertyChange(ISaveablePart2.PROP_DIRTY);
 	}
@@ -97,11 +120,11 @@ public class CodeEditor extends EditorPart {
 		this.setInput(input);
 		this.setPartName(input.getName());
 		this.input = (CodeEditorInput) input;
-		
+
 		this.curLine = 1;
-		this.curLineColor = new Color(Display.getCurrent(),new RGB(224, 251, 252));
-		this.textBackgroundColor = new Color(Display.getCurrent(),new RGB(255, 255, 255));
-		
+		this.curLineColor = new Color(Display.getCurrent(), new RGB(224, 251, 252));
+		this.textBackgroundColor = new Color(Display.getCurrent(), new RGB(255, 255, 255));
+
 	}
 
 	@Override
@@ -117,10 +140,497 @@ public class CodeEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+
+		createDeclareSection(sashForm);
+		createCodeSection(sashForm);
+
+		sashForm.setWeights(new int[] { 1, 2 });
+
+	}
+
+	public void createDeclareSection(Composite parent) {
+		tabViewer = new TableViewer(parent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		Table table = tabViewer.getTable();
+		TableColumn tc1 = new TableColumn(table, SWT.NONE);
+		tc1.setWidth(100);
+		tc1.setText("Category");
+		
+		TableColumn tc2 = new TableColumn(table, SWT.NONE);
+		tc2.setWidth(100);
+		tc2.setText("Name");
+		
+		TableColumn tc3 = new TableColumn(table, SWT.NONE);
+		tc3.setWidth(100);
+		tc3.setText("Type");
+		
+		TableColumn tc4 = new TableColumn(table, SWT.NONE);
+		tc4.setWidth(100);
+		tc4.setText("Position");
+		
+		TableColumn tc5 = new TableColumn(table, SWT.NONE);
+		tc5.setWidth(100);
+		tc5.setText("Value");
+		
+		TableColumn tc6 = new TableColumn(table, SWT.NONE);
+		tc6.setWidth(100);
+		tc6.setText("Option");
+		
+		TableColumn tc7 = new TableColumn(table, SWT.NONE);
+		tc7.setWidth(200);
+		tc7.setText("Annotation");
 		
 		
-		topComp = new Composite(sashForm, SWT.BORDER);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 		
+		ITreeEntry entry = input.getEntry();
+		
+		tabViewer.setContentProvider(new TableTreeViewContentProvider());
+		tabViewer.setLabelProvider(new TableViewerLabelProvider());
+		tabViewer.setSorter(new TableViewerSorter());
+		
+		tabViewer.setInput(entry);
+		
+
+		
+//		Color color = Display.getDefault().getSystemColor(SWT.COLOR_RED);  
+//		table.getItems()[table.getItemCount()-1].setBackground(color);
+		
+		tabViewer.setColumnProperties(new String[]{"category", "name", "type", "position", "value", "option", "description"});
+		CellEditor[] cellEditor = new CellEditor[7];
+		cellEditor[0] = new ComboBoxCellEditor(tabViewer.getTable(), VarDeclareEntity.CATEGORY, SWT.READ_ONLY);
+		cellEditor[1] = new TextCellEditor(tabViewer.getTable());
+		cellEditor[2] = new TextCellEditor(tabViewer.getTable());
+		cellEditor[3] = new TextCellEditor(tabViewer.getTable());
+		cellEditor[4] = new TextCellEditor(tabViewer.getTable());
+		cellEditor[5] = new ComboBoxCellEditor(tabViewer.getTable(), VarDeclareEntity.OPTIONS,	SWT.READ_ONLY);
+		cellEditor[6] = new TextCellEditor(tabViewer.getTable());
+	
+		tabViewer.setCellEditors(cellEditor);
+		tabViewer.setCellModifier(new ICellModifier() {
+			
+			@Override
+			public void modify(Object element, String property, Object value) {
+				boolean modifyFlag = false;
+				
+				TableItem item = (TableItem)element;
+				VarDeclareEntity var = (VarDeclareEntity)item.getData();
+				
+				if(property.equals("category")) {
+					int comboxIndex = (Integer)value;
+					String cur = VarDeclareEntity.CATEGORY[comboxIndex];
+					if(!cur.equals(var.getCategory()) && var.getCategory() != "RET") {
+						var.setCategory(cur);
+						modifyFlag = true;
+					}
+				} else if(property.equals("name")) {
+					String cur = (String)value;
+					if(!cur.equals(var.getName())) {
+						var.setName(cur);
+						modifyFlag = true;
+					}
+				} else if(property.equals("type")) {
+					String cur = (String)value;
+					if(!cur.equals(var.getType())) {
+						var.setType(cur);
+						modifyFlag = true;
+					}
+				} else if(property.equals("value")) {
+					String cur = (String)value;
+					if(!cur.equals(var.getInitVal())) {
+						var.setInitVal(cur);
+						modifyFlag = true;
+					}
+				} else if(property.equals("position")) {
+					String cur = (String)value;
+					if(!cur.equals(var.getPos())) {
+						var.setPos(cur);
+						modifyFlag = true;
+					}
+				} else if(property.equals("option")) {
+					int comboxIndex = (Integer)value;
+					String cur = VarDeclareEntity.OPTIONS[comboxIndex];
+					if(!cur.equals(var.getOption())) {
+						var.setOption(cur);
+						modifyFlag = true;
+					}
+					
+				} else if(property.equals("description")) {
+					String cur = (String)value;
+					if(!cur.equals(var.getAnnotation())) {
+						var.setAnnotation(cur);
+						modifyFlag = true;
+					}
+					
+				}
+				tabViewer.update(var, null);
+				if(modifyFlag == true) {
+					dirty = true;
+					firePropertyChange(ISaveablePart2.PROP_DIRTY);
+				}
+ 			}
+			
+			@Override
+			public Object getValue(Object element, String property) {
+				VarDeclareEntity var = (VarDeclareEntity)element;
+				if(property.equals("category")) {
+					return getCategoryIndex(var.getCategory());
+				} else if(property.equals("name")) {
+					return var.getName();
+				} else if(property.equals("type")) {
+					return var.getType();
+				} else if(property.equals("value")) {
+					return var.getInitVal();
+				} else if(property.equals("position")) {
+					return var.getPos();
+				} else if(property.equals("option")) {
+					return getOptionIndex(var.getOption());
+				} else if(property.equals("description")) {
+					return var.getAnnotation();
+				}
+				return null;
+			}
+			
+			@Override
+			public boolean canModify(Object element, String property) {
+				return true;
+			}
+			
+			private int getCategoryIndex(String key) {
+				for(int i = 0; i < VarDeclareEntity.CATEGORY.length; i ++) {
+					if(VarDeclareEntity.CATEGORY[i].equals(key)) {
+						return i;
+					}
+				}
+				return -1;
+			}
+			
+			private int getOptionIndex(String key) {
+				for(int i = 0; i < VarDeclareEntity.OPTIONS.length; i ++) {
+					if(VarDeclareEntity.OPTIONS[i].equals(key)) {
+						return i;
+					}
+				}
+				return 0;
+			}
+		});
+		
+		TableViewerActionGroup actionGroup = new TableViewerActionGroup(tabViewer);
+		actionGroup.fillContextMenu(new MenuManager());
+		
+	}
+
+	class TableTreeViewContentProvider implements IStructuredContentProvider {
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+		@Override
+		public Object[] getElements(Object element) {
+			if (element instanceof FunctionBlockEntity) {
+				FunctionBlockEntity entity = (FunctionBlockEntity) element;
+				List<VarDeclareEntity> all = new ArrayList<>();
+				all.addAll(entity.getInList());
+				all.addAll(entity.getInoutList());
+				all.addAll(entity.getOutList());
+				all.addAll(entity.getVarList());
+				all.addAll(entity.getTempList());
+				all.addAll(entity.getGlobalList());
+				return all.toArray();
+
+			} else if (element instanceof FunctionEntity) {
+				FunctionEntity entity = (FunctionEntity) element;
+				List<VarDeclareEntity> all = new ArrayList<>();
+				all.add(entity.getRetVar());
+				all.addAll(entity.getInList());
+				all.addAll(entity.getVarList());
+				return all.toArray();
+
+			} else if (element instanceof Program) {
+				Program entity = (Program) element;
+
+				List<VarDeclareEntity> all = new ArrayList<>();
+				all.addAll(entity.getInList());
+				all.addAll(entity.getInoutList());
+				all.addAll(entity.getOutList());
+				all.addAll(entity.getVarList());
+				all.addAll(entity.getTempList());
+				all.addAll(entity.getGlobalList());
+				return all.toArray();
+			}
+			return null;
+		}
+
+	}
+
+	class TableViewerLabelProvider implements ITableLabelProvider {
+
+		@Override
+		public void addListener(ILabelProviderListener listener) {
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		@Override
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
+		@Override
+		public Image getColumnImage(Object element, int col) {
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int col) {
+			VarDeclareEntity var = (VarDeclareEntity) element;
+			if (col == 0) {
+				return var.getCategory();
+			} else if (col == 1) {
+				return var.getName();
+			} else if (col == 2) {
+				return var.getType();
+			} else if (col == 3) {
+				return var.getInitVal();
+			} else if (col == 4) {
+				return var.getPos();
+			} else if (col == 5) {
+				return var.getOption();
+			} else if (col == 6) {
+				return var.getAnnotation();
+			}
+			return null;
+		}
+
+	}
+
+	class TableViewerSorter extends ViewerSorter {
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			VarDeclareEntity var1 = (VarDeclareEntity) e1;
+			VarDeclareEntity var2 = (VarDeclareEntity) e2;
+
+			return var1.getCategory().compareTo(var2.getCategory());
+		}
+
+	}
+
+	class TableViewerActionGroup extends ActionGroup {
+		private TableViewer tv;
+		public TableViewerActionGroup(TableViewer tv) {
+			this.tv = tv;
+		}
+		
+		@Override
+		public void fillContextMenu(IMenuManager mgr) {
+			MenuManager menuManager = (MenuManager)mgr;
+			
+			menuManager.add(new AddInputAction());
+			menuManager.add(new AddLocalAction());
+			ITreeEntry entry = input.getEntry();
+			if(entry instanceof FunctionBlockEntity || entry instanceof Program) {
+				menuManager.add(new AddInoutAction());
+				menuManager.add(new AddOutputAction());
+				
+				menuManager.add(new AddTempAction());
+				menuManager.add(new AddGlobalAction());
+			} 	
+			
+			menuManager.add(new DelAction());
+			
+			Table table = tv.getTable();
+			Menu menu = menuManager.createContextMenu(table);
+			table.setMenu(menu);
+		}
+		
+		private class AddInputAction extends Action {
+			public AddInputAction() {
+				this.setText("Add INPUT");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "INPUT");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionEntity) {
+					((FunctionEntity)entry).getInList().add(var);
+				} else if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getInList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getInList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		private class AddInoutAction extends Action {
+			public AddInoutAction() {
+				this.setText("Add INOUT");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "INOUT");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getInoutList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getInoutList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		private class AddOutputAction extends Action {
+			public AddOutputAction() {
+				this.setText("Add OUTPUT");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "OUTPUT");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getOutList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getOutList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		private class AddTempAction extends Action {
+			public AddTempAction() {
+				this.setText("Add TEMP");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "TEMP");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getTempList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getTempList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		private class AddLocalAction extends Action {
+			public AddLocalAction() {
+				this.setText("Add LOCAL");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "LOCAL");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionEntity) {
+					((FunctionEntity)entry).getVarList().add(var);
+				} else if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getVarList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getVarList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		private class AddGlobalAction extends Action {
+			public AddGlobalAction() {
+				this.setText("Add GLOBAL");
+				this.setImageDescriptor(PluginImage.ADD_VARIABLE_DESC);
+			}
+			public void run() {
+				VarDeclareEntity var = new VarDeclareEntity("Unnamed", "GLOBAL");
+				ITreeEntry entry = input.getEntry();
+				if(entry instanceof FunctionBlockEntity) {
+					((FunctionBlockEntity)entry).getGlobalList().add(var);
+				} else if(entry instanceof Program) {
+					((Program)entry).getGlobalList().add(var);
+				}
+				tabViewer.refresh();
+			}
+		}
+		
+		
+		
+		private class DelAction extends Action {
+			public DelAction() {
+				this.setText("Del Variable");
+				this.setImageDescriptor(PluginImage.DEL_VARIABLE_DESC);
+			}
+			
+			public void run() {
+				IStructuredSelection selection = (IStructuredSelection)tv.getSelection();
+				VarDeclareEntity var = (VarDeclareEntity)selection.getFirstElement();
+				if(var == null) return;
+				String category = var.getCategory();
+				ITreeEntry entry = input.getEntry();
+				switch(category) {
+				case "INPUT":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getInList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getInList().remove(var);
+					} else if(entry instanceof FunctionEntity) {
+						((FunctionEntity)entry).getInList().remove(var);
+					}
+					break;
+				case "INOUT":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getInoutList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getInoutList().remove(var);
+					}
+					break;
+				case "OUTPUT":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getOutList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getOutList().remove(var);
+					}
+					break;
+				case "LOCAL":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getVarList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getVarList().remove(var);
+					} else if(entry instanceof FunctionEntity) {
+						((FunctionEntity)entry).getVarList().remove(var);
+					}
+					break;
+				case "TEMP":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getTempList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getTempList().remove(var);
+					}
+					break;
+				case "GLOBAL":
+					if(entry instanceof FunctionBlockEntity) {
+						((FunctionBlockEntity)entry).getGlobalList().remove(var);
+					} else if(entry instanceof Program) {
+						((Program)entry).getGlobalList().remove(var);
+					}
+					break;
+				}
+				
+				tabViewer.refresh();
+			}
+			
+		}
+		
+	}
+	
+	public void createCodeSection(Composite parent) {
 		CompositeRuler ruler = new CompositeRuler();
 
 		AnnotationRulerColumn annoCol = new AnnotationRulerColumn(12);
@@ -132,7 +642,7 @@ public class CodeEditor extends EditorPart {
 		ruler.addDecorator(1, lineCol);
 		ruler.addDecorator(2, placeHolder);
 
-		codeViewer = new SourceViewer(sashForm, ruler, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		codeViewer = new SourceViewer(parent, ruler, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		codeViewer.configure(new CodeConfiguration());
 
 		Font font = new Font(Display.getCurrent(), StringConverter
@@ -148,8 +658,8 @@ public class CodeEditor extends EditorPart {
 		codeViewer.setDocument(document);
 		codeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		undoManager = new TextViewerUndoManager(100); 	// 初始化撤销管理器对象，默认可撤销100次
-		undoManager.connect(codeViewer); 				// 将该撤销管理器应用于文档
+		undoManager = new TextViewerUndoManager(100); // 初始化撤销管理器对象，默认可撤销100次
+		undoManager.connect(codeViewer); // 将该撤销管理器应用于文档
 		codeViewer.setUndoManager(undoManager);
 
 		StyledText styledText = codeViewer.getTextWidget();
@@ -176,51 +686,51 @@ public class CodeEditor extends EditorPart {
 				// do nothing
 			}
 		});
-		
+
 		StyledText text = codeViewer.getTextWidget();
 		text.setIndent(4);
-		
+
 		String body = null;
 		ITreeEntry entry = input.getEntry();
-		if(entry instanceof FunctionBlockEntity) {
-			FunctionBlockEntity entity = (FunctionBlockEntity)input.getEntry();
+		if (entry instanceof FunctionBlockEntity) {
+			FunctionBlockEntity entity = (FunctionBlockEntity) input.getEntry();
 			body = entity.getBody();
-		} else if(entry instanceof FunctionEntity) {
-			FunctionEntity entity = (FunctionEntity)input.getEntry();
+		} else if (entry instanceof FunctionEntity) {
+			FunctionEntity entity = (FunctionEntity) input.getEntry();
 			body = entity.getBody();
-		} else if(entry instanceof Program) {
-			Program entity = (Program)input.getEntry();
+		} else if (entry instanceof Program) {
+			Program entity = (Program) input.getEntry();
 			body = entity.getBody();
 		}
-		if(body != null) {
+		if (body != null) {
 			text.setText(body);
 		} else {
 			text.setText("");
 		}
 
-		
 		text.addModifyListener(new ModifyListener() {
-			
+
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dirty = true;
 				firePropertyChange(ISaveablePart2.PROP_DIRTY);
 			}
 		});
-		
+
 		text.addCaretListener(new CaretListener() {
-			
+
 			@Override
 			public void caretMoved(CaretEvent event) {
 				text.setLineBackground(curLine, 1, textBackgroundColor);
 				curLine = text.getLineAtOffset(text.getCaretOffset());
 				text.setLineBackground(curLine, 1, curLineColor);
-				
+				// IStatusLineManager statusline =
+				// getEditorSite().getActionBars().getStatusLineManager();
+				// statusline.setMessage("Positon " + curLine + " : " +
+				// text.getCaret().getLocation().x);
+
 			}
 		});
-		
-		sashForm.setWeights(new int[] {1, 2});
-		
 	}
 
 	public class CodeConfiguration extends SourceViewerConfiguration {

@@ -190,7 +190,7 @@ public class XmlProjectParser {
 					Element elemInterface = pou.element("interface");
 					
 					List<Element> elemRetVarType = elemInterface.element("returnType").elements();
-					VarDeclareEntity retVarEntity = new VarDeclareEntity();
+					VarDeclareEntity retVarEntity = new VarDeclareEntity(attrPouName.getText(), "RET");
 					for (Element t : elemRetVarType) {
 						retVarEntity.setType(t.getName());
 					}
@@ -201,7 +201,7 @@ public class XmlProjectParser {
 						List<Element> localVarList = localVarGroup.elements();
 						for (Element var : localVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "LOCAL");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -234,7 +234,7 @@ public class XmlProjectParser {
 						List<Element> inVarList = inVarGroup.elements();
 						for (Element var : inVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "INPUT");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -243,12 +243,12 @@ public class XmlProjectParser {
 						}
 					}
 
-					Element outVarGroup = elemInterface.element("inputVars");
+					Element outVarGroup = elemInterface.element("outputVars");
 					if (outVarGroup != null) {
 						List<Element> outVarList = outVarGroup.elements();
 						for (Element var : outVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "OUTPUT");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -262,7 +262,7 @@ public class XmlProjectParser {
 						List<Element> localVarList = localVarGroup.elements();
 						for (Element var : localVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "LOCAL");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -293,7 +293,7 @@ public class XmlProjectParser {
 						List<Element> inVarList = inVarGroup.elements();
 						for (Element var : inVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "INPUT");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -302,12 +302,12 @@ public class XmlProjectParser {
 						}
 					}
 
-					Element outVarGroup = elemInterface.element("inputVars");
+					Element outVarGroup = elemInterface.element("outputVars");
 					if (outVarGroup != null) {
 						List<Element> outVarList = outVarGroup.elements();
 						for (Element var : outVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(),  "OUTPUT");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());
@@ -321,7 +321,7 @@ public class XmlProjectParser {
 						List<Element> localVarList = localVarGroup.elements();
 						for (Element var : localVarList) {
 							Attribute attrName = var.attribute("name");
-							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText());
+							VarDeclareEntity varEntity = new VarDeclareEntity(attrName.getText(), "LOCAL");
 							List<Element> elemVarType = var.element("type").elements();
 							for (Element t : elemVarType) {
 								varEntity.setType(t.getName());

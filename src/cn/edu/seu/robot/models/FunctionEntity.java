@@ -16,9 +16,11 @@ import cn.edu.seu.robot.utils.PluginImage;
  */
 public class FunctionEntity extends ITreeEntry implements IPOUEntity{
 
+	
 	private VarDeclareEntity retVar;
 
 	private List<VarDeclareEntity> varList = new ArrayList<>();
+	private List<VarDeclareEntity> inList = new ArrayList<>();
 	private String body;
 	private String annotation;
 
@@ -58,6 +60,15 @@ public class FunctionEntity extends ITreeEntry implements IPOUEntity{
 	public void setAnnotation(String annotation){
 		this.annotation = annotation;
 	}
+	
+	public List<VarDeclareEntity> getInList() {
+		return inList;
+	}
+
+	public void setInList(List<VarDeclareEntity> inList) {
+		this.inList = inList;
+	}
+
 
 	@Override
 	public String getPouInfo() {
